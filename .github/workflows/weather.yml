@@ -2,12 +2,14 @@ name: Actualitzar temps i roba
 
 on:
   schedule:
-    # 6:00h hora espanyola (4:00 UTC a l'estiu, 5:00 UTC a l'hivern)
-    - cron: '0 4 * * *'
-    - cron: '0 5 * * *'
-    # 14:00h hora espanyola (12:00 UTC a l'estiu, 13:00 UTC a l'hivern)
-    - cron: '0 12 * * *'
-    - cron: '0 13 * * *'
+    # Espanya usa CET (UTC+1) a l'hivern i CEST (UTC+2) a l'estiu.
+    # Per cobrir les 6:00h i 14:00h hora espanyola en ambdues èpoques,
+    # es programen 4 execucions. Cada dia, 2 d'elles coincidiran amb
+    # l'hora correcta i les altres 2 seran redundants però inofensives.
+    - cron: '0 4 * * *'   # 6:00 CEST (estiu)
+    - cron: '0 5 * * *'   # 6:00 CET  (hivern)
+    - cron: '0 12 * * *'  # 14:00 CEST (estiu)
+    - cron: '0 13 * * *'  # 14:00 CET  (hivern)
   workflow_dispatch:
 
 permissions:

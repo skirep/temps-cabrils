@@ -370,7 +370,7 @@ def recommend_clothing(temp, feels_like, is_raining, is_sunny, person):
         elif person == "dona":
             items.append("Impermeable o jaqueta amb caputxa")
         else:
-            items.append("Impermeable o jaqueta impermeble")
+            items.append("Impermeable o jaqueta impermeable")
 
     # Sun protection
     if is_sunny and effective >= 20:
