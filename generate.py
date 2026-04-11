@@ -159,7 +159,7 @@ def weather_emoji(weather_type, is_day):
 def recommend_clothing(temp, feels_like, is_raining, is_sunny, person):
     """
     Generate clothing recommendations in Catalan.
-    person: 'dona', 'home', 'nen3', 'nen6'
+    person: 'dona', 'home', 'nena3', 'nen6'
     """
     # Adjust effective temperature based on person type
     if person == "dona":
@@ -168,7 +168,7 @@ def recommend_clothing(temp, feels_like, is_raining, is_sunny, person):
     elif person == "home":
         # Not cold-sensitive: use feels_like directly
         effective = feels_like
-    elif person in ("nen3", "nen6"):
+    elif person in ("nena3", "nen6"):
         # Children: feels 1 degree colder (more sensitive)
         effective = feels_like - 1
     else:
@@ -198,7 +198,7 @@ def recommend_clothing(temp, feels_like, is_raining, is_sunny, person):
                 "Bufanda",
                 "Sabates tancades",
             ])
-        elif person == "nen3":
+        elif person == "nena3":
             items.extend([
                 "Abric gruixut amb caputxa",
                 "Jersei de llana",
@@ -238,7 +238,7 @@ def recommend_clothing(temp, feels_like, is_raining, is_sunny, person):
                 "Pantalons llargs",
                 "Sabates tancades",
             ])
-        elif person == "nen3":
+        elif person == "nena3":
             items.extend([
                 "Jaqueta gruixuda amb caputxa",
                 "Jersei",
@@ -270,7 +270,7 @@ def recommend_clothing(temp, feels_like, is_raining, is_sunny, person):
                 "Pantalons llargs",
                 "Sabates",
             ])
-        elif person == "nen3":
+        elif person == "nena3":
             items.extend([
                 "Jaqueta lleugera",
                 "Samarreta màniga llarga",
@@ -298,7 +298,7 @@ def recommend_clothing(temp, feels_like, is_raining, is_sunny, person):
                 "Pantalons llargs o curts",
                 "Sabates o esportives",
             ])
-        elif person == "nen3":
+        elif person == "nena3":
             items.extend([
                 "Samarreta màniga llarga o curta",
                 "Pantalons llargs lleugers",
@@ -323,7 +323,7 @@ def recommend_clothing(temp, feels_like, is_raining, is_sunny, person):
                 "Pantalons curts o llargs lleugers",
                 "Sandàlies o esportives",
             ])
-        elif person == "nen3":
+        elif person == "nena3":
             items.extend([
                 "Samarreta màniga curta",
                 "Pantalons curts",
@@ -348,7 +348,7 @@ def recommend_clothing(temp, feels_like, is_raining, is_sunny, person):
                 "Pantalons curts",
                 "Sandàlies",
             ])
-        elif person == "nen3":
+        elif person == "nena3":
             items.extend([
                 "Samarreta màniga curta lleugera",
                 "Pantalons curts",
@@ -364,7 +364,7 @@ def recommend_clothing(temp, feels_like, is_raining, is_sunny, person):
     # Rain additions
     if is_raining:
         items.append("Paraigua ☔")
-        if person in ("nen3", "nen6"):
+        if person in ("nena3", "nen6"):
             items.append("Botes d'aigua")
             items.append("Impermeable amb caputxa")
         elif person == "dona":
@@ -375,7 +375,7 @@ def recommend_clothing(temp, feels_like, is_raining, is_sunny, person):
     # Sun protection
     if is_sunny and effective >= 20:
         items.append("Crema solar 🧴")
-        if person in ("nen3", "nen6"):
+        if person in ("nena3", "nen6"):
             items.append("Gorra de sol")
             items.append("Ulleres de sol")
         elif person == "dona":
@@ -394,7 +394,7 @@ def person_icon(person):
         "dona": ("👩", "Mare"),
         "home": ("👨", "Pare"),
         "nen6": ("👦", "Nen (6 anys)"),
-        "nen3": ("👶", "Nen (3 anys)"),
+        "nena3": ("👶", "Nena (3 anys)"),
     }
     return icons.get(person, ("👤", person))
 
@@ -447,7 +447,7 @@ def generate_html(weather_data):
 
     update_time = now.strftime("%d/%m/%Y %H:%M")
 
-    people = ["dona", "home", "nen6", "nen3"]
+    people = ["dona", "home", "nen6", "nena3"]
     cards_html = ""
     for person in people:
         icon, name = person_icon(person)
