@@ -603,6 +603,14 @@ def generate_html(weather_data):
             font-size: 0.9em;
         }}
 
+        .modern .footer-link {{
+            color: inherit;
+        }}
+
+        .retro .footer-link {{
+            color: #ff0;
+        }}
+
         /* ===== STYLE TOGGLE ===== */
         .style-toggle {{
             position: fixed;
@@ -868,10 +876,6 @@ def generate_html(weather_data):
             padding-top: 20px;
         }}
 
-        .retro footer a {{
-            color: #ff0 !important;
-        }}
-
         .retro .toggle-slider {{
             background: #0f3460;
             border: 2px solid #0ff;
@@ -899,8 +903,9 @@ def generate_html(weather_data):
 
         /* ===== RESPONSIVE: Tablet ===== */
         @media (max-width: 1024px) {{
-            .cards-grid {{
-                grid-template-columns: repeat(2, 1fr) !important;
+            body.modern .cards-grid,
+            body.retro .cards-grid {{
+                grid-template-columns: repeat(2, 1fr);
             }}
         }}
 
@@ -933,8 +938,9 @@ def generate_html(weather_data):
                 gap: 8px;
             }}
 
-            .cards-grid {{
-                grid-template-columns: 1fr !important;
+            body.modern .cards-grid,
+            body.retro .cards-grid {{
+                grid-template-columns: 1fr;
                 gap: 16px;
             }}
 
@@ -981,32 +987,32 @@ def generate_html(weather_data):
 
     <div class="container">
         <header>
-            <h1>\U0001f3d8\ufe0f Temps a {LOCATION}</h1>
+            <h1>🏘️ Temps a {LOCATION}</h1>
             <div class="weather-emoji">{emoji}</div>
             <p class="weather-desc">{desc}</p>
-            <div class="temp-main">{temp}\u00b0C</div>
+            <div class="temp-main">{temp}°C</div>
         </header>
 
         <div class="weather-summary">
             <div class="weather-detail">
-                <span class="detail-icon">\U0001f321\ufe0f</span>
-                <span>Sensaci\u00f3: {feels_like}\u00b0C</span>
+                <span class="detail-icon">🌡️</span>
+                <span>Sensació: {feels_like}°C</span>
             </div>
             <div class="weather-detail">
-                <span class="detail-icon">\U0001f4c8</span>
-                <span>M\u00e0x: {temp_max}\u00b0C / M\u00edn: {temp_min}\u00b0C</span>
+                <span class="detail-icon">📈</span>
+                <span>Màx: {temp_max}°C / Mín: {temp_min}°C</span>
             </div>
             <div class="weather-detail">
-                <span class="detail-icon">\U0001f321\ufe0f</span>
-                <span>Sensaci\u00f3 m\u00e0x: {feels_max}\u00b0C / m\u00edn: {feels_min}\u00b0C</span>
+                <span class="detail-icon">🌡️</span>
+                <span>Sensació màx: {feels_max}°C / mín: {feels_min}°C</span>
             </div>
             <div class="weather-detail">
-                <span class="detail-icon">\U0001f4a8</span>
+                <span class="detail-icon">💨</span>
                 <span>Vent: {wind_speed} km/h</span>
             </div>
             <div class="weather-detail">
-                <span class="detail-icon">\u2601\ufe0f</span>
-                <span>N\u00favols: {cloud_cover}%</span>
+                <span class="detail-icon">☁️</span>
+                <span>Núvols: {cloud_cover}%</span>
             </div>
             {rain_info}
         </div>
@@ -1017,15 +1023,15 @@ def generate_html(weather_data):
 
         <footer>
             <p>Actualitzat: {update_time}</p>
-            <p>Dades meteorol\u00f2giques proporcionades per <a href="https://open-meteo.com/" style="color:inherit;">Open-Meteo</a></p>
+            <p>Dades meteorològiques proporcionades per <a href="https://open-meteo.com/" class="footer-link">Open-Meteo</a></p>
         </footer>
     </div>
 
     <script>
         (function() {{
-            var toggle = document.getElementById('style-switch');
-            var body = document.body;
-            var saved = localStorage.getItem('temps-cabrils-style');
+            const toggle = document.getElementById('style-switch');
+            const body = document.body;
+            const saved = localStorage.getItem('temps-cabrils-style');
             if (saved === 'retro') {{
                 body.className = 'retro';
                 toggle.checked = false;
