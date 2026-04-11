@@ -1,0 +1,58 @@
+name: Actualitzar temps i roba
+
+on:
+  schedule:
+    # Espanya usa CET (UTC+1) a l'hivern i CEST (UTC+2) a l'estiu.
+    # Per cobrir les 6:00h i 14:00h hora espanyola en ambdues èpoques,
+    # es programen 4 execucions. Cada dia, 2 d'elles coincidiran amb
+    # l'hora correcta i les altres 2 seran redundants però inofensives.
+    - cron: '0 4 * * *'   # 6:00 CEST (estiu)
+    - cron: '0 5 * * *'   # 6:00 CET  (hivern)
+    - cron: '0 12 * * *'  # 14:00 CEST (estiu)
+    - cron: '0 13 * * *'  # 14:00 CET  (hivern)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate weather page
+        run: python generate.py
+        env:
+          OUTPUT_DIR: output
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: output
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
