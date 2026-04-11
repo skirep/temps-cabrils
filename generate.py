@@ -489,6 +489,9 @@ def generate_html(weather_data):
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Temps a {LOCATION} - Quina roba portar?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         * {{
             margin: 0;
@@ -496,13 +499,11 @@ def generate_html(weather_data):
             box-sizing: border-box;
         }}
 
+        /* ===== BASE / SHARED STYLES ===== */
         body {{
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: {bg_gradient};
-            background-color: {bg_color};
             min-height: 100vh;
-            color: {text_color};
             background-attachment: fixed;
+            transition: font-family 0.3s, background 0.3s, color 0.3s;
         }}
 
         .weather-bg {{
@@ -531,7 +532,7 @@ def generate_html(weather_data):
         .container {{
             position: relative;
             z-index: 1;
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }}
@@ -539,13 +540,6 @@ def generate_html(weather_data):
         header {{
             text-align: center;
             padding: 30px 20px;
-            color: {header_text_color};
-        }}
-
-        header h1 {{
-            font-size: 2.2em;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }}
 
         .weather-emoji {{
@@ -555,25 +549,19 @@ def generate_html(weather_data):
         }}
 
         .weather-summary {{
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px;
-            margin: 20px 0 30px;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 20px;
+            gap: 12px;
+            margin: 20px 0 30px;
+            padding: 25px;
         }}
 
         .weather-detail {{
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 1.1em;
             padding: 8px 16px;
-            background: rgba(255,255,255,0.15);
-            border-radius: 12px;
         }}
 
         .detail-icon {{
@@ -581,29 +569,13 @@ def generate_html(weather_data):
         }}
 
         .temp-main {{
-            font-size: 3em;
             font-weight: bold;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.15);
         }}
 
         .cards-grid {{
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
-        }}
-
-        .card {{
-            background: rgba(255,255,255,0.9);
-            border-radius: 16px;
-            padding: 25px;
-            color: #2d3436;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease;
-        }}
-
-        .card:hover {{
-            transform: translateY(-4px);
         }}
 
         .card-header {{
@@ -612,16 +584,6 @@ def generate_html(weather_data):
             gap: 12px;
             margin-bottom: 15px;
             padding-bottom: 12px;
-            border-bottom: 2px solid #f0f0f0;
-        }}
-
-        .person-icon {{
-            font-size: 2.2em;
-        }}
-
-        .card-header h2 {{
-            font-size: 1.3em;
-            color: #2d3436;
         }}
 
         .clothing-list {{
@@ -632,14 +594,6 @@ def generate_html(weather_data):
         .clothing-list li {{
             padding: 8px 12px;
             margin: 4px 0;
-            background: #f8f9fa;
-            border-radius: 8px;
-            font-size: 0.95em;
-            border-left: 3px solid #74b9ff;
-        }}
-
-        .clothing-list li:nth-child(even) {{
-            border-left-color: #a29bfe;
         }}
 
         footer {{
@@ -649,24 +603,380 @@ def generate_html(weather_data):
             font-size: 0.9em;
         }}
 
+        .modern .footer-link {{
+            color: inherit;
+        }}
+
+        .retro .footer-link {{
+            color: #ff0;
+        }}
+
+        /* ===== STYLE TOGGLE ===== */
+        .style-toggle {{
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }}
+
+        .style-toggle label {{
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: pointer;
+        }}
+
+        .toggle-switch {{
+            position: relative;
+            width: 56px;
+            height: 28px;
+            cursor: pointer;
+        }}
+
+        .toggle-switch input {{
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }}
+
+        .toggle-slider {{
+            position: absolute;
+            inset: 0;
+            border-radius: 28px;
+            transition: background 0.3s;
+        }}
+
+        .toggle-slider::before {{
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            left: 3px;
+            bottom: 3px;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }}
+
+        .toggle-switch input:checked + .toggle-slider::before {{
+            transform: translateX(28px);
+        }}
+
+        /* ===== MODERN STYLE (default) ===== */
+        body.modern {{
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: {bg_gradient};
+            background-color: {bg_color};
+            color: {text_color};
+        }}
+
+        .modern header {{
+            color: {header_text_color};
+        }}
+
+        .modern header h1 {{
+            font-size: 2.4em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            letter-spacing: -0.02em;
+        }}
+
+        .modern .weather-desc {{
+            font-size: 1.3em;
+            margin-bottom: 8px;
+        }}
+
+        .modern .temp-main {{
+            font-size: 3.2em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }}
+
+        .modern .weather-summary {{
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }}
+
+        .modern .weather-detail {{
+            font-size: 1em;
+            background: rgba(255,255,255,0.12);
+            border-radius: 14px;
+        }}
+
+        .modern .cards-grid {{
+            grid-template-columns: repeat(4, 1fr);
+        }}
+
+        .modern .card {{
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 24px;
+            color: #2d3436;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }}
+
+        .modern .card:hover {{
+            transform: translateY(-6px);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+        }}
+
+        .modern .card-header {{
+            border-bottom: 2px solid #f0f0f0;
+        }}
+
+        .modern .person-icon {{
+            font-size: 2.4em;
+        }}
+
+        .modern .card-header h2 {{
+            font-size: 1.2em;
+            color: #2d3436;
+            font-weight: 700;
+        }}
+
+        .modern .clothing-list li {{
+            background: linear-gradient(90deg, #f8f9fa, #fff);
+            border-radius: 10px;
+            font-size: 0.9em;
+            border-left: 3px solid #74b9ff;
+        }}
+
+        .modern .clothing-list li:nth-child(even) {{
+            border-left-color: #a29bfe;
+        }}
+
+        .modern .toggle-slider {{
+            background: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.4);
+        }}
+
+        .modern .toggle-slider::before {{
+            background: #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }}
+
+        .modern .toggle-switch input:checked + .toggle-slider {{
+            background: rgba(116,185,255,0.6);
+        }}
+
+        .modern .style-toggle label {{
+            color: {header_text_color};
+            text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }}
+
+        /* ===== RETRO STYLE ===== */
+        body.retro {{
+            font-family: 'Press Start 2P', monospace;
+            background: #1a1a2e;
+            color: #0ff;
+            image-rendering: pixelated;
+        }}
+
+        .retro .weather-bg {{
+            display: none;
+        }}
+
+        .retro header {{
+            color: #0ff;
+            border-bottom: 4px dashed #0ff;
+            padding-bottom: 20px;
+        }}
+
+        .retro header h1 {{
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #ff0;
+            text-shadow: 3px 3px 0 #f0f;
+            letter-spacing: 0.05em;
+        }}
+
+        .retro .weather-desc {{
+            font-size: 0.7em;
+            margin-bottom: 8px;
+            color: #0f0;
+        }}
+
+        .retro .temp-main {{
+            font-size: 1.6em;
+            color: #ff0;
+            text-shadow: 2px 2px 0 #f00;
+        }}
+
+        .retro .weather-summary {{
+            background: #16213e;
+            border: 3px solid #0ff;
+            border-radius: 0;
+            box-shadow: 6px 6px 0 #0ff;
+        }}
+
+        .retro .weather-detail {{
+            font-size: 0.55em;
+            background: #0f3460;
+            border: 2px solid #0ff;
+            border-radius: 0;
+            color: #0ff;
+        }}
+
+        .retro .cards-grid {{
+            grid-template-columns: repeat(4, 1fr);
+        }}
+
+        .retro .card {{
+            background: #16213e;
+            border: 3px solid #0f0;
+            border-radius: 0;
+            padding: 20px;
+            color: #0ff;
+            box-shadow: 6px 6px 0 #0f0;
+            transition: transform 0.15s;
+        }}
+
+        .retro .card:hover {{
+            transform: translate(-3px, -3px);
+            box-shadow: 9px 9px 0 #0f0;
+        }}
+
+        .retro .card-header {{
+            border-bottom: 2px dashed #0f0;
+        }}
+
+        .retro .person-icon {{
+            font-size: 2em;
+        }}
+
+        .retro .card-header h2 {{
+            font-size: 0.7em;
+            color: #ff0;
+        }}
+
+        .retro .clothing-list li {{
+            background: #0f3460;
+            border-radius: 0;
+            font-size: 0.55em;
+            border-left: 4px solid #f0f;
+            line-height: 1.8;
+            color: #0ff;
+        }}
+
+        .retro .clothing-list li:nth-child(even) {{
+            border-left-color: #0f0;
+        }}
+
+        .retro footer {{
+            color: #0ff;
+            border-top: 4px dashed #0ff;
+            margin-top: 20px;
+            padding-top: 20px;
+        }}
+
+        .retro .toggle-slider {{
+            background: #0f3460;
+            border: 2px solid #0ff;
+            border-radius: 0;
+        }}
+
+        .retro .toggle-slider::before {{
+            background: #0ff;
+            border-radius: 0;
+            box-shadow: 2px 2px 0 #f0f;
+        }}
+
+        .retro .toggle-switch input:checked + .toggle-slider {{
+            background: #0f0;
+        }}
+
+        .retro .toggle-switch input:checked + .toggle-slider::before {{
+            background: #1a1a2e;
+        }}
+
+        .retro .style-toggle label {{
+            color: #0ff;
+            font-size: 0.55em;
+        }}
+
+        /* ===== RESPONSIVE: Tablet ===== */
+        @media (max-width: 1024px) {{
+            body.modern .cards-grid,
+            body.retro .cards-grid {{
+                grid-template-columns: repeat(2, 1fr);
+            }}
+        }}
+
+        /* ===== RESPONSIVE: Mobile ===== */
         @media (max-width: 600px) {{
-            header h1 {{
-                font-size: 1.5em;
+            .container {{
+                padding: 12px;
             }}
-            .temp-main {{
-                font-size: 2em;
+
+            .modern header h1 {{
+                font-size: 1.6em;
             }}
+
+            .retro header h1 {{
+                font-size: 0.8em;
+            }}
+
+            .modern .temp-main {{
+                font-size: 2.2em;
+            }}
+
+            .retro .temp-main {{
+                font-size: 1.2em;
+            }}
+
             .weather-summary {{
                 flex-direction: column;
                 align-items: center;
+                padding: 16px;
+                gap: 8px;
             }}
-            .cards-grid {{
+
+            body.modern .cards-grid,
+            body.retro .cards-grid {{
                 grid-template-columns: 1fr;
+                gap: 16px;
+            }}
+
+            .style-toggle {{
+                top: 8px;
+                right: 8px;
+            }}
+
+            .modern .card {{
+                padding: 18px;
+            }}
+
+            .retro .card {{
+                padding: 14px;
+            }}
+
+            .modern .card-header h2 {{
+                font-size: 1em;
+            }}
+
+            .retro .card-header h2 {{
+                font-size: 0.6em;
             }}
         }}
     </style>
 </head>
-<body>
+<body class="modern">
+    <div class="style-toggle">
+        <label for="style-switch" id="label-retro">Retro</label>
+        <div class="toggle-switch">
+            <input type="checkbox" id="style-switch" checked>
+            <span class="toggle-slider"></span>
+        </div>
+        <label for="style-switch" id="label-modern">Modern</label>
+    </div>
+
     <div class="weather-bg">
         <div class="particle" style="width:80px;height:80px;background:rgba(255,255,255,0.1);top:10%;left:20%;animation-delay:0s;"></div>
         <div class="particle" style="width:120px;height:120px;background:rgba(255,255,255,0.08);top:50%;left:70%;animation-delay:2s;"></div>
@@ -679,7 +989,7 @@ def generate_html(weather_data):
         <header>
             <h1>🏘️ Temps a {LOCATION}</h1>
             <div class="weather-emoji">{emoji}</div>
-            <p style="font-size:1.3em;margin-bottom:8px;">{desc}</p>
+            <p class="weather-desc">{desc}</p>
             <div class="temp-main">{temp}°C</div>
         </header>
 
@@ -713,9 +1023,33 @@ def generate_html(weather_data):
 
         <footer>
             <p>Actualitzat: {update_time}</p>
-            <p>Dades meteorològiques proporcionades per <a href="https://open-meteo.com/" style="color:inherit;">Open-Meteo</a></p>
+            <p>Dades meteorològiques proporcionades per <a href="https://open-meteo.com/" class="footer-link">Open-Meteo</a></p>
         </footer>
     </div>
+
+    <script>
+        (function() {{
+            const toggle = document.getElementById('style-switch');
+            const body = document.body;
+            const saved = localStorage.getItem('temps-cabrils-style');
+            if (saved === 'retro') {{
+                body.className = 'retro';
+                toggle.checked = false;
+            }} else {{
+                body.className = 'modern';
+                toggle.checked = true;
+            }}
+            toggle.addEventListener('change', function() {{
+                if (toggle.checked) {{
+                    body.className = 'modern';
+                    localStorage.setItem('temps-cabrils-style', 'modern');
+                }} else {{
+                    body.className = 'retro';
+                    localStorage.setItem('temps-cabrils-style', 'retro');
+                }}
+            }});
+        }})();
+    </script>
 </body>
 </html>"""
 
