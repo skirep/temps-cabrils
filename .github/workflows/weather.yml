@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -24,6 +24,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Skip runs triggered by the automated screenshot commit to avoid loops
+    if: "!contains(github.event.head_commit.message, '[screenshot]')"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -48,11 +50,79 @@ jobs:
 
   deploy:
     needs: build
+    if: "!contains(github.event.head_commit.message, '[screenshot]')"
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  screenshot:
+    needs: deploy
+    runs-on: ubuntu-latest
+    env:
+      PAGE_URL: ${{ needs.deploy.outputs.page_url }}
+      MAX_RETRIES: 12
+      RETRY_DELAY: 10
+      SCREENSHOT_TIMEOUT_MS: 60000
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Playwright and Chromium
+        run: |
+          pip install playwright
+          playwright install chromium --with-deps
+
+      - name: Wait for site to be reachable
+        run: |
+          echo "Waiting for $PAGE_URL to be reachable..."
+          for i in $(seq 1 "$MAX_RETRIES"); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$PAGE_URL" || echo "000")
+            echo "Attempt $i: HTTP $STATUS"
+            if [ "$STATUS" = "200" ]; then
+              echo "Site is reachable."
+              exit 0
+            fi
+            sleep "$RETRY_DELAY"
+          done
+          echo "Site did not become reachable in time." >&2
+          exit 1
+
+      - name: Take screenshot
+        run: |
+          mkdir -p screenshots
+          python - <<'EOF'
+          import os
+          from playwright.sync_api import sync_playwright
+
+          url = os.environ["PAGE_URL"]
+          timeout = int(os.environ["SCREENSHOT_TIMEOUT_MS"])
+          output = "screenshots/web-preview.png"
+
+          with sync_playwright() as p:
+              browser = p.chromium.launch()
+              page = browser.new_page(viewport={"width": 1280, "height": 800})
+              page.goto(url, wait_until="networkidle", timeout=timeout)
+              page.screenshot(path=output, full_page=True)
+              browser.close()
+
+          print(f"Screenshot saved to {output}")
+          EOF
+
+      - name: Commit and push screenshot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add screenshots/web-preview.png
+          if git diff --cached --quiet; then
+            echo "Screenshot unchanged, nothing to commit."
+          else
+            git commit -m "chore: update web preview screenshot [screenshot]"
+            git push
+          fi
