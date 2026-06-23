@@ -910,7 +910,7 @@ def generate_html(weather_data):
         }}
 
         /* ===== RESPONSIVE: 800x600 ===== */
-        @media (max-width: 800px) {{
+        @media (min-width: 601px) and (max-width: 800px) {{
             .container {{
                 padding: 14px;
             }}
@@ -929,7 +929,7 @@ def generate_html(weather_data):
             }}
 
             .retro header h1 {{
-                font-size: 0.85em;
+                font-size: 1em;
             }}
 
             .modern .weather-desc {{
@@ -937,7 +937,7 @@ def generate_html(weather_data):
             }}
 
             .retro .weather-desc {{
-                font-size: 0.6em;
+                font-size: 0.65em;
             }}
 
             .modern .temp-main {{
@@ -945,7 +945,7 @@ def generate_html(weather_data):
             }}
 
             .retro .temp-main {{
-                font-size: 1.2em;
+                font-size: 1.3em;
             }}
 
             .weather-summary {{
@@ -959,7 +959,7 @@ def generate_html(weather_data):
             }}
 
             .retro .weather-detail {{
-                font-size: 0.5em;
+                font-size: 0.55em;
             }}
         }}
 
