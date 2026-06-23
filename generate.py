@@ -909,6 +909,60 @@ def generate_html(weather_data):
             }}
         }}
 
+        /* ===== RESPONSIVE: 800x600 ===== */
+        @media (max-width: 800px) {{
+            .container {{
+                padding: 14px;
+            }}
+
+            header {{
+                padding: 14px 14px;
+            }}
+
+            .weather-emoji {{
+                font-size: 2.6em;
+                margin: 8px 0;
+            }}
+
+            .modern header h1 {{
+                font-size: 1.7em;
+            }}
+
+            .retro header h1 {{
+                font-size: 0.85em;
+            }}
+
+            .modern .weather-desc {{
+                font-size: 1em;
+            }}
+
+            .retro .weather-desc {{
+                font-size: 0.6em;
+            }}
+
+            .modern .temp-main {{
+                font-size: 2.4em;
+            }}
+
+            .retro .temp-main {{
+                font-size: 1.2em;
+            }}
+
+            .weather-summary {{
+                padding: 14px;
+                gap: 8px;
+                margin: 12px 0 18px;
+            }}
+
+            .modern .weather-detail {{
+                font-size: 0.88em;
+            }}
+
+            .retro .weather-detail {{
+                font-size: 0.5em;
+            }}
+        }}
+
         /* ===== RESPONSIVE: Mobile ===== */
         @media (max-width: 600px) {{
             .container {{
